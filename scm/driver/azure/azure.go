@@ -55,6 +55,23 @@ func NewDefault(owner, project string) *scm.Client {
 	return client
 }
 
+// NewFromAugmentedServerURL returns a new azure API client from a server url that includes the owner and project
+func NewFromAugmentedServerURL(augmentedServerURL string) (*scm.Client, error) {
+	var server, owner, project string
+	url, err := url.Parse(augmentedServerURL)
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse server url: %w", err)
+	}
+	path := strings.Split(url.Path, "/")
+	if len(path) < 2 {
+		return nil, fmt.Errorf("server URL must contain owner and project in url")
+	}
+	owner = path[len(path)-2]
+	project = path[len(path)-1]
+	server = augmentedServerURL[0 : len(augmentedServerURL)-len(url.Path)]
+	return New(server, owner, project)
+}
+
 // wrapper wraps the Client to provide high level helper functions for making http requests and unmarshaling the response.
 type wrapper struct {
 	*scm.Client

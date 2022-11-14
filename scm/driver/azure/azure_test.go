@@ -37,6 +37,16 @@ func TestClient_azure_special(t *testing.T) {
 	}
 }
 
+func TestClient_AugmentedServerURL(t *testing.T) {
+	client, err := NewFromAugmentedServerURL("https://dev.azure.com/some-org/some-proj")
+	if err != nil {
+		t.Errorf("unexpected error: %s", err.Error())
+	}
+	if got, want := client.BaseURL.String(), "https://dev.azure.com/"; got != want {
+		t.Errorf("Want Client URL %q, got %q", want, got)
+	}
+}
+
 func TestSanitizeBranchName(t *testing.T) {
 	type args struct {
 		name string
