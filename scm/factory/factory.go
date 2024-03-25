@@ -93,7 +93,11 @@ func newClient(driver, serverURL string, authOptions *AuthOptions, opts ...Clien
 
 	switch driver {
 	case "azure":
-		client = azure.NewDefault()
+		if serverURL != "" {
+			client, err = azure.New(serverURL)
+		} else {
+			client = azure.NewDefault()
+		}
 	case "bitbucket", "bitbucketcloud":
 		if serverURL != "" {
 			client, err = bitbucket.New(ensureBBCEndpoint(serverURL))
